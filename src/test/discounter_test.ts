@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-import {MyElement} from '../my-element.js';
+import {DiscounterForm} from '../discounter.js';
 
 import {fixture, assert} from '@open-wc/testing';
 import {html} from 'lit/static-html.js';
@@ -12,7 +12,7 @@ import {html} from 'lit/static-html.js';
 suite('my-element', () => {
   test('is defined', () => {
     const el = document.createElement('my-element');
-    assert.instanceOf(el, MyElement);
+    assert.instanceOf(el, DiscounterForm);
   });
 
   test('renders with default values', async () => {
@@ -40,7 +40,7 @@ suite('my-element', () => {
   });
 
   test('handles a click', async () => {
-    const el = (await fixture(html`<my-element></my-element>`)) as MyElement;
+    const el = (await fixture(html`<my-element></my-element>`)) as DiscounterForm;
     const button = el.shadowRoot!.querySelector('button')!;
     button.click();
     await el.updateComplete;
@@ -55,7 +55,7 @@ suite('my-element', () => {
   });
 
   test('styling applied', async () => {
-    const el = (await fixture(html`<my-element></my-element>`)) as MyElement;
+    const el = (await fixture(html`<my-element></my-element>`)) as DiscounterForm;
     await el.updateComplete;
     assert.equal(getComputedStyle(el).paddingTop, '16px');
   });
