@@ -163,38 +163,6 @@ export class DataController {
     }
     async hostConnected() {
         await this.discountQuery();
-        this._data = {
-            checkout: {
-                "total_line_items_price": "500.00",
-                "presentment_currency": "USD",
-                "customer_locale": "en-MA",
-                "payment_due": "390.00",
-                "total_discount_amount": "75.00",
-                "gift_cards": [
-                    {
-                        "id": 257826029641,
-                        "last_characters": "a87a",
-                        "balance": "25.00",
-                        "amount_used": "25.00",
-                        "presentment_amount_used": "25.00"
-                    },
-                    {
-                        "id": 257826062409,
-                        "last_characters": "8gff",
-                        "balance": "10.00",
-                        "amount_used": "10.00",
-                        "presentment_amount_used": "10.00"
-                    }
-                ],
-                "applied_discounts": [
-                    {
-                        "amount": "75.00",
-                        "title": "TEST1",
-                        "application_type": "discount_code"
-                    }
-                ],
-            }
-        };
         this.host.requestUpdate();
     }
 }
