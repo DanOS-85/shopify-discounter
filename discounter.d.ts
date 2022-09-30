@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 import { LitElement } from 'lit';
+import { GiftCard } from './data-controller';
 /**
  * An example element.
  *
@@ -13,21 +14,30 @@ import { LitElement } from 'lit';
  */
 export declare class DiscounterForm extends LitElement {
     static styles: import("lit").CSSResult;
-    private data;
     private hide;
     private error;
     private loading;
-    private disabled;
     private code;
     private dataFetcher;
+    updated(): void;
     handleInput(event: InputEvent): void;
+    showTooltip(event: MouseEvent): void;
+    hideTooltip(event: MouseEvent): void;
+    clearDiscount(event: Event, code: string): Promise<void>;
+    clearGiftCard(event: Event, giftCard: GiftCard): Promise<void>;
     private applyCode;
     private getDiscountsAndGifts;
     render(): "" | import("lit-html").TemplateResult<1>;
 }
 export declare class DiscounterSummary extends LitElement {
+    static styles: import("lit").CSSResult;
+    constructor();
+    private _getDiscounts;
+    private _getGiftCards;
+    private _formatMoney;
     private dataFetcher;
-    render(): import("lit-html").TemplateResult<1>;
+    private data;
+    render(): "" | import("lit-html").TemplateResult<1>;
 }
 declare global {
     interface HTMLElementTagNameMap {

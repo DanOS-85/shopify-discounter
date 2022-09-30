@@ -7,6 +7,7 @@
 import summary from 'rollup-plugin-summary';
 import {terser} from 'rollup-plugin-terser';
 import resolve from '@rollup/plugin-node-resolve';
+import minifyHTML from 'rollup-plugin-minify-html-literals';
 import replace from '@rollup/plugin-replace';
 
 export default {
@@ -23,15 +24,12 @@ export default {
   plugins: [
     replace({'Reflect.decorate': 'undefined'}),
     resolve(),
+    // Minify HTML template literals
+    minifyHTML(),
     terser({
-      ecma: 2017,
+      ecma: 2020,
       module: true,
       warnings: true,
-      mangle: {
-        properties: {
-          regex: /^__/,
-        },
-      },
     }),
     summary(),
   ],

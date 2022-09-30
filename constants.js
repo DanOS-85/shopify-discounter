@@ -8,6 +8,9 @@ export const GIFT_ICON = html `<svg class="icon gift_icon" xmlns="http://www.w3.
 <path d="M16 13v2c0 1.657-1.343 3-3 3h-3v-5h6zm0-2h-6V5h6c1.105 0 2 .895 2 2s-.895 2-2 2v2zM2 13h6v5H5c-1.657 0-3-1.343-3-3v-2zm0-2V9C.895 9 0 8.105 0 7s.895-2 2-2h6v6H2z"></path>
 </g>
 </svg>`;
+export const INFO_ICON = html `<svg class="icon info_icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+<path d="M12 11h1v7h-2v-5c-.552 0-1-.448-1-1s.448-1 1-1h1zm0 13C5.373 24 0 18.627 0 12S5.373 0 12 0s12 5.373 12 12-5.373 12-12 12zm0-2c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10zM10.5 7.5c0-.828.666-1.5 1.5-1.5.828 0 1.5.666 1.5 1.5 0 .828-.666 1.5-1.5 1.5-.828 0-1.5-.666-1.5-1.5z"></path>
+</svg>`;
 export const SPINNER_ICON = html `<svg class="icon spinner_icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
 <path d="M20 10c0 5.523-4.477 10-10 10S0 15.523 0 10 4.477 0 10 0v2c-4.418 0-8 3.582-8 8s3.582 8 8 8 8-3.582 8-8h2z"></path>
 </svg>`;

@@ -8,11 +8,21 @@ export interface GiftCard {
   presentment_amount_used: string,
 }
 
+export interface Discount {
+  title: string,
+  amount: string,
+  application_type: string,
+}
+
 export interface CheckoutData {
   checkout: {
-    applied_discounts: Array<{title: string}>,
+    applied_discounts: Array<Discount>,
     gift_cards: Array<GiftCard>,
-    total_discount_amount: string
+    total_discount_amount: string,
+    total_line_items_price: string,
+    payment_due: string,
+    customer_locale: string,
+    presentment_currency: string,
   }
 }
 
@@ -21,7 +31,7 @@ export class DataController implements ReactiveController {
   _token: string;
   _authorizationToken: string;
   _data: CheckoutData;
-  _discounts: Array<{title: string}>;
+  _discounts: Array<Discount>;
   _gift_cards: Array<GiftCard>;
   _error: boolean;
 
@@ -30,9 +40,13 @@ export class DataController implements ReactiveController {
     this._authorizationToken = '';
     this._data = {
       checkout: {
-        applied_discounts: [],
-        gift_cards: [],
+        applied_discounts: [] as Array<Discount>,
+        gift_cards: [] as Array<GiftCard>,
         total_discount_amount: "",
+        total_line_items_price: "",
+        payment_due: "",
+        customer_locale: "",
+        presentment_currency: "",
       }
     };
     this._discounts = [];
@@ -43,6 +57,12 @@ export class DataController implements ReactiveController {
 
   private async getTokens() {
     const data = await fetch('/checkout');
+
+    if (data.status === 409) {
+      await this.getTokens();
+      return;
+    }
+
     if (!data.ok) {
       throw Error('Not ok status!');
     }
@@ -55,8 +75,8 @@ export class DataController implements ReactiveController {
     this._token = data.url.split('/').pop() as string;
   }
 
-  queryCheckout(method="GET", body:string|null=null) {
-    return fetch(`/wallets/checkouts/${this._token}`, {
+  async queryCheckout(method="GET", body:string|null=null) {
+    let data = await fetch(`/wallets/checkouts/${this._token}`, {
       headers: {
         accept: '*/*',
         'content-type': 'application/json',
@@ -67,6 +87,12 @@ export class DataController implements ReactiveController {
       mode: 'cors',
       credentials: 'omit'
     });
+
+    if (data.status === 409) {
+      data = await this.queryCheckout(method, body);
+    }
+
+    return data;
   }
 
   async clearDiscount(event: Event, code: string) {
@@ -83,6 +109,7 @@ export class DataController implements ReactiveController {
       }
 
       const JsonData = await data.json();
+      this._data = JsonData;
 
       if (JsonData?.checkout?.applied_discounts) {
         this._discounts = JsonData.checkout.applied_discounts;
@@ -124,6 +151,7 @@ export class DataController implements ReactiveController {
       }
 
       const JsonData = await data.json();
+      this._data = JsonData;
 
       if (JsonData?.checkout?.applied_discounts) {
         this._discounts = JsonData.checkout.applied_discounts;
@@ -133,8 +161,10 @@ export class DataController implements ReactiveController {
         this._gift_cards = JsonData.checkout.gift_cards;
       }
 
+      button.classList.remove('loading');
       this.host.requestUpdate();
     } catch (error) {
+      button.classList.remove('loading');
       console.log(error)
     }
   }
@@ -153,6 +183,7 @@ export class DataController implements ReactiveController {
     }
 
     const JsonData = await data.json();
+    this._data = JsonData;
 
     if (JsonData?.checkout?.applied_discounts) {
       this._discounts = JsonData.checkout.applied_discounts;
@@ -179,6 +210,7 @@ export class DataController implements ReactiveController {
       }
 
       const JsonData = await data.json();
+      this._data = JsonData;
 
       if (JsonData?.checkout?.applied_discounts) {
         this._discounts = JsonData.checkout.applied_discounts;
@@ -187,8 +219,6 @@ export class DataController implements ReactiveController {
       if (JsonData?.checkout?.gift_cards) {
         this._gift_cards = JsonData.checkout.gift_cards;
       }
-
-      this._data = JsonData;
     } catch (error) {
       console.log(error);
       this._error = true;
@@ -197,6 +227,38 @@ export class DataController implements ReactiveController {
 
   async hostConnected() {
     await this.discountQuery();
+    this._data = {
+      checkout: {
+        "total_line_items_price": "500.00",
+        "presentment_currency": "USD",
+        "customer_locale": "en-MA",
+        "payment_due": "390.00",
+        "total_discount_amount": "75.00",
+        "gift_cards": [
+          {
+            "id": 257826029641,
+            "last_characters": "a87a",
+            "balance": "25.00",
+            "amount_used": "25.00",
+            "presentment_amount_used": "25.00"
+          },
+          {
+            "id": 257826062409,
+            "last_characters": "8gff",
+            "balance": "10.00",
+            "amount_used": "10.00",
+            "presentment_amount_used": "10.00"
+          }
+        ],
+        "applied_discounts": [
+          {
+            "amount": "75.00",
+            "title": "TEST1",
+            "application_type": "discount_code"
+          }
+        ],
+      }
+    }
     this.host.requestUpdate();
   }
 }

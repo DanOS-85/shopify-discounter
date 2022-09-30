@@ -6,13 +6,20 @@ export interface GiftCard {
     amount_used: string;
     presentment_amount_used: string;
 }
+export interface Discount {
+    title: string;
+    amount: string;
+    application_type: string;
+}
 export interface CheckoutData {
     checkout: {
-        applied_discounts: Array<{
-            title: string;
-        }>;
+        applied_discounts: Array<Discount>;
         gift_cards: Array<GiftCard>;
         total_discount_amount: string;
+        total_line_items_price: string;
+        payment_due: string;
+        customer_locale: string;
+        presentment_currency: string;
     };
 }
 export declare class DataController implements ReactiveController {
@@ -20,9 +27,7 @@ export declare class DataController implements ReactiveController {
     _token: string;
     _authorizationToken: string;
     _data: CheckoutData;
-    _discounts: Array<{
-        title: string;
-    }>;
+    _discounts: Array<Discount>;
     _gift_cards: Array<GiftCard>;
     _error: boolean;
     constructor(host: ReactiveControllerHost);

@@ -7,6 +7,10 @@ export class DataController {
                 applied_discounts: [],
                 gift_cards: [],
                 total_discount_amount: "",
+                total_line_items_price: "",
+                payment_due: "",
+                customer_locale: "",
+                presentment_currency: "",
             }
         };
         this._discounts = [];
@@ -17,6 +21,10 @@ export class DataController {
     async getTokens() {
         var _a, _b;
         const data = await fetch('/checkout');
+        if (data.status === 409) {
+            await this.getTokens();
+            return;
+        }
         if (!data.ok) {
             throw Error('Not ok status!');
         }
@@ -27,8 +35,8 @@ export class DataController {
         this._authorizationToken = (_b = (_a = div.querySelector(metaSelector)) === null || _a === void 0 ? void 0 : _a.content) !== null && _b !== void 0 ? _b : '';
         this._token = data.url.split('/').pop();
     }
-    queryCheckout(method = "GET", body = null) {
-        return fetch(`/wallets/checkouts/${this._token}`, {
+    async queryCheckout(method = "GET", body = null) {
+        let data = await fetch(`/wallets/checkouts/${this._token}`, {
             headers: {
                 accept: '*/*',
                 'content-type': 'application/json',
@@ -39,6 +47,10 @@ export class DataController {
             mode: 'cors',
             credentials: 'omit'
         });
+        if (data.status === 409) {
+            data = await this.queryCheckout(method, body);
+        }
+        return data;
     }
     async clearDiscount(event, code) {
         var _a, _b;
@@ -52,6 +64,7 @@ export class DataController {
                 throw Error('Not ok status!');
             }
             const JsonData = await data.json();
+            this._data = JsonData;
             if ((_a = JsonData === null || JsonData === void 0 ? void 0 : JsonData.checkout) === null || _a === void 0 ? void 0 : _a.applied_discounts) {
                 this._discounts = JsonData.checkout.applied_discounts;
             }
@@ -87,15 +100,18 @@ export class DataController {
                 throw Error('Not ok status!');
             }
             const JsonData = await data.json();
+            this._data = JsonData;
             if ((_a = JsonData === null || JsonData === void 0 ? void 0 : JsonData.checkout) === null || _a === void 0 ? void 0 : _a.applied_discounts) {
                 this._discounts = JsonData.checkout.applied_discounts;
             }
             if ((_b = JsonData === null || JsonData === void 0 ? void 0 : JsonData.checkout) === null || _b === void 0 ? void 0 : _b.gift_cards) {
                 this._gift_cards = JsonData.checkout.gift_cards;
             }
+            button.classList.remove('loading');
             this.host.requestUpdate();
         }
         catch (error) {
+            button.classList.remove('loading');
             console.log(error);
         }
     }
@@ -111,6 +127,7 @@ export class DataController {
             throw Error('Not ok status!');
         }
         const JsonData = await data.json();
+        this._data = JsonData;
         if ((_a = JsonData === null || JsonData === void 0 ? void 0 : JsonData.checkout) === null || _a === void 0 ? void 0 : _a.applied_discounts) {
             this._discounts = JsonData.checkout.applied_discounts;
         }
@@ -131,13 +148,13 @@ export class DataController {
                 throw Error('Not ok status!');
             }
             const JsonData = await data.json();
+            this._data = JsonData;
             if ((_a = JsonData === null || JsonData === void 0 ? void 0 : JsonData.checkout) === null || _a === void 0 ? void 0 : _a.applied_discounts) {
                 this._discounts = JsonData.checkout.applied_discounts;
             }
             if ((_b = JsonData === null || JsonData === void 0 ? void 0 : JsonData.checkout) === null || _b === void 0 ? void 0 : _b.gift_cards) {
                 this._gift_cards = JsonData.checkout.gift_cards;
             }
-            this._data = JsonData;
         }
         catch (error) {
             console.log(error);
@@ -146,6 +163,38 @@ export class DataController {
     }
     async hostConnected() {
         await this.discountQuery();
+        this._data = {
+            checkout: {
+                "total_line_items_price": "500.00",
+                "presentment_currency": "USD",
+                "customer_locale": "en-MA",
+                "payment_due": "390.00",
+                "total_discount_amount": "75.00",
+                "gift_cards": [
+                    {
+                        "id": 257826029641,
+                        "last_characters": "a87a",
+                        "balance": "25.00",
+                        "amount_used": "25.00",
+                        "presentment_amount_used": "25.00"
+                    },
+                    {
+                        "id": 257826062409,
+                        "last_characters": "8gff",
+                        "balance": "10.00",
+                        "amount_used": "10.00",
+                        "presentment_amount_used": "10.00"
+                    }
+                ],
+                "applied_discounts": [
+                    {
+                        "amount": "75.00",
+                        "title": "TEST1",
+                        "application_type": "discount_code"
+                    }
+                ],
+            }
+        };
         this.host.requestUpdate();
     }
 }
