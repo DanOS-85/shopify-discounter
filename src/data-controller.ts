@@ -60,12 +60,12 @@ export class DataController implements ReactiveController {
     const data = await fetch('/checkout');
 
     if (data.status === 409) {
-      await this.getTokens();
+      setTimeout(async () => await this.getTokens());
       return;
     }
 
     if (!data.ok) {
-      throw Error('Not ok status!');
+      throw Error('Query failed!');
     }
 
     const text = await data.text();
@@ -90,7 +90,9 @@ export class DataController implements ReactiveController {
     });
 
     if (data.status === 409) {
-      data = await this.queryCheckout(method, body);
+      setTimeout(async () => {
+        data = await this.queryCheckout(method, body);
+      });
     }
 
     return data;
@@ -99,14 +101,13 @@ export class DataController implements ReactiveController {
   async clearDiscount(event: Event, code: string) {
     const button = event.currentTarget as HTMLButtonElement;
     button.classList.add('loading');
-    console.log('%cTEST', 'color: orange; background: black; padding: 5px;', button);
 
     try {
       const body = JSON.stringify({ checkout: { clear_discount: 1, discount_code: code } });
       const data = await this.queryCheckout("PUT", body);
 
       if (!data.ok) {
-        throw Error('Not ok status!');
+        throw Error('Operation failed!');
       }
 
       const JsonData = await data.json();
@@ -131,7 +132,6 @@ export class DataController implements ReactiveController {
   async clearGiftCard(event: Event, giftCard: GiftCard) {
     const button = event.currentTarget as HTMLButtonElement;
     button.classList.add('loading');
-    console.log('%cTEST', 'color: orange; background: black; padding: 5px;', button);
 
     try {
       const body = JSON.stringify({
@@ -148,7 +148,7 @@ export class DataController implements ReactiveController {
       const data = await this.queryCheckout("PUT", body);
 
       if (!data.ok) {
-        throw Error('Not ok status!');
+        throw Error('Operation failed!');
       }
 
       const JsonData = await data.json();
@@ -180,7 +180,7 @@ export class DataController implements ReactiveController {
     const data = await this.queryCheckout("PUT", body);
 
     if (!data.ok) {
-      throw Error('Not ok status!');
+      throw Error('Operation failed!');
     }
 
     const JsonData = await data.json();
@@ -208,7 +208,7 @@ export class DataController implements ReactiveController {
       }
 
       if (!data.ok) {
-        throw Error('Not ok status!');
+        throw Error('Operation failed!');
       }
 
       const JsonData = await data.json();

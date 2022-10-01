@@ -22,11 +22,11 @@ export class DataController {
         var _a, _b;
         const data = await fetch('/checkout');
         if (data.status === 409) {
-            await this.getTokens();
+            setTimeout(async () => await this.getTokens());
             return;
         }
         if (!data.ok) {
-            throw Error('Not ok status!');
+            throw Error('Query failed!');
         }
         const text = await data.text();
         const div = document.createElement('div');
@@ -48,7 +48,9 @@ export class DataController {
             credentials: 'omit'
         });
         if (data.status === 409) {
-            data = await this.queryCheckout(method, body);
+            setTimeout(async () => {
+                data = await this.queryCheckout(method, body);
+            });
         }
         return data;
     }
@@ -56,12 +58,11 @@ export class DataController {
         var _a, _b;
         const button = event.currentTarget;
         button.classList.add('loading');
-        console.log('%cTEST', 'color: orange; background: black; padding: 5px;', button);
         try {
             const body = JSON.stringify({ checkout: { clear_discount: 1, discount_code: code } });
             const data = await this.queryCheckout("PUT", body);
             if (!data.ok) {
-                throw Error('Not ok status!');
+                throw Error('Operation failed!');
             }
             const JsonData = await data.json();
             this._data = JsonData;
@@ -83,7 +84,6 @@ export class DataController {
         var _a, _b;
         const button = event.currentTarget;
         button.classList.add('loading');
-        console.log('%cTEST', 'color: orange; background: black; padding: 5px;', button);
         try {
             const body = JSON.stringify({
                 checkout: {
@@ -97,7 +97,7 @@ export class DataController {
             });
             const data = await this.queryCheckout("PUT", body);
             if (!data.ok) {
-                throw Error('Not ok status!');
+                throw Error('Operation failed!');
             }
             const JsonData = await data.json();
             this._data = JsonData;
@@ -124,7 +124,7 @@ export class DataController {
         });
         const data = await this.queryCheckout("PUT", body);
         if (!data.ok) {
-            throw Error('Not ok status!');
+            throw Error('Operation failed!');
         }
         const JsonData = await data.json();
         this._data = JsonData;
@@ -146,7 +146,7 @@ export class DataController {
                 return;
             }
             if (!data.ok) {
-                throw Error('Not ok status!');
+                throw Error('Operation failed!');
             }
             const JsonData = await data.json();
             this._data = JsonData;

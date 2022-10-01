@@ -20,7 +20,7 @@ import { DataController, GiftCard, CheckoutData, Discount } from './data-control
 export class DiscounterForm extends LitElement {
   static override styles = css`
     .form--wrapper {
-      padding: 6px
+      padding: 6px 0;
     }
     .form {
       display: flex;
@@ -205,8 +205,10 @@ export class DiscounterForm extends LitElement {
 
   private getDiscountsAndGifts() {
     if (
-      this.dataFetcher._discounts.length ||
-      this.dataFetcher._gift_cards.length
+      (
+        this.dataFetcher._discounts.length ||
+        this.dataFetcher._gift_cards.length
+      ) && !this.dataFetcher._error
     ) {
       return html`<div class="codes">
         ${this.dataFetcher._discounts.map((discount: Discount) => {
@@ -395,7 +397,7 @@ export class DiscounterSummary extends LitElement {
       white-space: nowrap;
     }
     .footer .payment-due {
-      position: relative;
+      position: sticky;
     }
     .footer .payment-due::after {
       background-color: rgba(162,170,172,0.34);
