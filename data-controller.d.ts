@@ -10,6 +10,7 @@ export interface Discount {
     title: string;
     amount: string;
     application_type: string;
+    value_type: string;
 }
 export interface CheckoutData {
     checkout: {

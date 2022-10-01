@@ -14,7 +14,7 @@ import { GiftCard } from './data-controller';
  */
 export declare class DiscounterForm extends LitElement {
     static styles: import("lit").CSSResult;
-    private hide;
+    private emptyMsg;
     private error;
     private loading;
     private code;
@@ -27,7 +27,7 @@ export declare class DiscounterForm extends LitElement {
     clearGiftCard(event: Event, giftCard: GiftCard): Promise<void>;
     private applyCode;
     private getDiscountsAndGifts;
-    render(): "" | import("lit-html").TemplateResult<1>;
+    render(): import("lit-html").TemplateResult<1>;
 }
 export declare class DiscounterSummary extends LitElement {
     static styles: import("lit").CSSResult;
@@ -37,7 +37,7 @@ export declare class DiscounterSummary extends LitElement {
     private _formatMoney;
     private dataFetcher;
     private data;
-    render(): "" | import("lit-html").TemplateResult<1>;
+    render(): import("lit-html").TemplateResult<1> | "";
 }
 declare global {
     interface HTMLElementTagNameMap {

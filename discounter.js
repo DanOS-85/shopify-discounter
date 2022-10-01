@@ -10,7 +10,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 import { LitElement, html, css } from 'lit';
-import { customElement, state } from 'lit/decorators.js';
+import { customElement, property, state } from 'lit/decorators.js';
 import { CLOSE_ICON, DISCOUNT_ICON, GIFT_ICON, INFO_ICON, SPINNER_ICON } from './constants';
 import { DataController } from './data-controller';
 /**
@@ -23,7 +23,7 @@ import { DataController } from './data-controller';
 let DiscounterForm = class DiscounterForm extends LitElement {
     constructor() {
         super(...arguments);
-        this.hide = false;
+        this.emptyMsg = false;
         this.error = false;
         this.loading = false;
         this.code = '';
@@ -68,7 +68,6 @@ let DiscounterForm = class DiscounterForm extends LitElement {
             this.loading = false;
         }
         catch (error) {
-            this.code = '';
             this.loading = false;
             this.error = true;
             console.log(error);
@@ -77,7 +76,7 @@ let DiscounterForm = class DiscounterForm extends LitElement {
     getDiscountsAndGifts() {
         if (this.dataFetcher._discounts.length ||
             this.dataFetcher._gift_cards.length) {
-            return html `<div class="discounter-component__codes">
+            return html `<div class="codes">
         ${this.dataFetcher._discounts.map((discount) => {
                 const markup = discount.application_type === "automatic" ?
                     html `<div
@@ -85,7 +84,7 @@ let DiscounterForm = class DiscounterForm extends LitElement {
               @mouseenter=${this.showTooltip}
               @mouseleave=${this.hideTooltip}
             >
-              <div class="discounter-component__tooltip" style="position: absolute; display: none;">
+              <div class="tooltip" style="position: absolute; display: none;">
                 Automatic discount can't be removed
               </div>
               ${INFO_ICON}
@@ -100,7 +99,7 @@ let DiscounterForm = class DiscounterForm extends LitElement {
             </button>
           `;
                 return html `
-            <div class="discounter-component__code">
+            <div class="code">
               <span>
                 ${DISCOUNT_ICON}
                 <span>${discount.title.toUpperCase()}</span>
@@ -112,7 +111,7 @@ let DiscounterForm = class DiscounterForm extends LitElement {
 
         ${this.dataFetcher._gift_cards.map((gift_card) => {
                 return html `
-            <div class="discounter-component__code">
+            <div class="code">
               <span>
                 ${GIFT_ICON}
                 <span>•••• ${gift_card.last_characters.toUpperCase()}</span>
@@ -132,15 +131,15 @@ let DiscounterForm = class DiscounterForm extends LitElement {
         return '';
     }
     render() {
-        if (this.hide) {
-            return '';
+        if (this.dataFetcher._error && this.emptyMsg) {
+            return html `<p>Your cart is currently empty.</p>`;
         }
         const classes = this.loading ? 'button loading' : 'button';
         const errorClass = this.error ? 'error' : '';
         return html `
-      <div class="discounter-component">
-        <div class="discounter-component__form--wrapper">
-          <div class="discounter-component__form">
+      <div class="discounter-form">
+        <div class="form--wrapper">
+          <div class="form">
             <input
               type="text"
               class=${errorClass}
@@ -151,7 +150,7 @@ let DiscounterForm = class DiscounterForm extends LitElement {
             <button
               type="submit"
               class=${classes}
-              ?disabled=${!this.code.length}
+              ?disabled=${this.dataFetcher._error || !this.code.length}
               @click=${this.applyCode}
             >
               <span>Apply</span>
@@ -159,8 +158,12 @@ let DiscounterForm = class DiscounterForm extends LitElement {
             </button>
           </div>
 
+          ${this.dataFetcher._error
+            ? html `<p class="message">Your cart is currently empty.</p>`
+            : ''}
+
           ${this.error
-            ? html `<p class="discounter-component__message">Enter a valid discount code or gift card</p>`
+            ? html `<p class="message error">Invalid discount code or gift card or invalid combination</p>`
             : ''}
         </div>
 
@@ -170,34 +173,37 @@ let DiscounterForm = class DiscounterForm extends LitElement {
     }
 };
 DiscounterForm.styles = css `
-    .discounter-component__form--wrapper {
+    .form--wrapper {
       padding: 6px
     }
-    .discounter-component__form {
+    .form {
       display: flex;
       flex-wrap: wrap;
       gap: 12px;
     }
-    .discounter-component__form input {
+    .form input {
+      color: inherit;
       border-radius: 5px;
+      flex: 1 1 0%;
       padding: 13px 11px;
     }
-    .discounter-component__form input.error {
+    .form input.error {
       border: 1px solid #ff6d6d;
     }
-    .discounter-component__form button {
+    .form button {
+      border: 0;
       border-radius: 5px;
-      background: black;
+      background: var(--discounter-button-color, black);
       color: white;
       font-weight: 600;
       padding: 13px 24px;
       position: relative;
     }
-    .discounter-component__form button[disabled] {
+    .form button[disabled] {
       cursor: not-allowed;
       opacity: 0.4;
     }
-    .discounter-component__form button svg {
+    .form button svg {
       visibility: hidden;
       position: absolute;
       top: 50%;
@@ -207,27 +213,30 @@ DiscounterForm.styles = css `
       transition: opacity 0.3s ease-in-out;
       opacity: 0;
     }
-    .discounter-component__form button.loading span {
+    .form button.loading span {
       visibility: hidden;
     }
-    .discounter-component__form button.loading svg {
+    .form button.loading svg {
       animation: rotate 0.5s linear infinite;
       visibility: visible;
       opacity: 1;
     }
-    .discounter-component__message {
-      color: #ff6d6d;
+    .message {
       font-size: 14px;
       margin: 8px 0 4px;
     }
-    .discounter-component__codes {
+    .message.error {
+      color: #ff6d6d;
+    }
+    .codes {
       display: flex;
       flex-wrap: wrap;
       gap: 10px;
       margin-top: 12px;
     }
-    .discounter-component__tooltip {
-      background: aliceblue;
+    .tooltip {
+      background: var(--discounter-tooltip-bg, white);
+      color: var(--discounter-tooltip-color, black);
       padding: 8px;
       border-radius: 5px;
       font-weight: 600;
@@ -235,41 +244,41 @@ DiscounterForm.styles = css `
       top: 50%;
       white-space: nowrap;
     }
-    .discounter-component__code {
-      background-color: rgba(113, 113, 113, 0.11);
+    .code {
+      background-color: var(--discounter-code-bg, #e7f3f6);
       border-radius: 5px;
-      color: #717171;
+      color: var(--discounter-code-color, black);
       display: inline-flex;
       gap: 8px;
       padding: 10px;
     }
-    .discounter-component__code span {
+    .code span {
       align-items: center;
       display: flex;
       font-size: 13px;
       font-weight: 600;
       gap: 8px;
     }
-    .discounter-component .icon {
+    .icon {
       fill: currentColor;
       height: 18px;
       width: 18px;
     }
-    .discounter-component__code button {
+    .code button {
       background: transparent;
       border: 0;
       cursor: pointer;
       padding: 0;
     }
-    .discounter-component__code button .spinner_icon {
+    .code button .spinner_icon {
       animation: rotate 0.5s linear infinite;
     }
-    .discounter-component__code button .close_icon,
-    .discounter-component__code button.loading .spinner_icon {
+    .code button .close_icon,
+    .code button.loading .spinner_icon {
       display: block;
     }
-    .discounter-component__code button .spinner_icon,
-    .discounter-component__code button.loading .close_icon {
+    .code button .spinner_icon,
+    .code button.loading .close_icon {
       display: none;
     }
     @keyframes rotate {
@@ -282,8 +291,8 @@ DiscounterForm.styles = css `
     }
   `;
 __decorate([
-    state()
-], DiscounterForm.prototype, "hide", void 0);
+    property({ type: Boolean, attribute: 'empty-msg' })
+], DiscounterForm.prototype, "emptyMsg", void 0);
 __decorate([
     state()
 ], DiscounterForm.prototype, "error", void 0);
@@ -310,6 +319,9 @@ let DiscounterSummary = class DiscounterSummary extends LitElement {
         if (this.data.checkout.applied_discounts.length) {
             return html `
         ${this.data.checkout.applied_discounts.map(discount => {
+                const price = discount.value_type === "shipping" ?
+                    'Free shipping' :
+                    `- ${this._formatMoney(locale, currency, discount.amount)}`;
                 return html `<tr class="reduction-code">
             <th class="name" scope="row">
               <span>Discount</span>
@@ -320,12 +332,8 @@ let DiscounterSummary = class DiscounterSummary extends LitElement {
             </th>
     
             <td class="price">
-              <span class="emphasis" aria-hidden="true">
-                - ${this._formatMoney(locale, currency, discount.amount)}
-              </span>
-              <span class="visually-hidden">
-                ${this._formatMoney(locale, currency, discount.amount)} off total order price
-              </span>
+              <span class="emphasis" aria-hidden="true">${price}</span>
+              <span class="visually-hidden">${price} of total order price</span>
             </td>
           </tr>`;
             })}
@@ -366,8 +374,40 @@ let DiscounterSummary = class DiscounterSummary extends LitElement {
         return new Intl.NumberFormat(locale, { style: 'currency', currency }).format(+amount);
     }
     render() {
-        if (!this.data.checkout.total_line_items_price) {
+        if (this.dataFetcher._error) {
             return '';
+        }
+        if (!this.data.checkout.total_line_items_price) {
+            return html `
+        <div class="discounter-summary">
+          <table class="table">
+            <caption class="visually-hidden">Cost summary</caption>
+            <thead>
+              <tr>
+                <th scope="col"><span class="visually-hidden">Description</span></th>
+                <th scope="col"><span class="visually-hidden">Price</span></th>
+              </tr>
+            </thead>
+            <tbody class="tbody">
+              <tr class="subtotal">
+                <th class="name" scope="row">Subtotal</th>
+                <td class="price loading"></td>
+              </tr>
+
+              <tr class="reduction-code">
+                <th class="name loading" scope="row"></th>
+                <td class="price loading"></td>
+              </tr>
+            </tbody>
+            <tfoot class="footer">
+              <tr class="payment-due">
+                <th class="name" scope="row">Total</th>
+                <td class="price loading"></td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      `;
         }
         return html `
       <div class="discounter-summary">
@@ -409,6 +449,9 @@ let DiscounterSummary = class DiscounterSummary extends LitElement {
     }
 };
 DiscounterSummary.styles = css `
+    table {
+      width: 100%;
+    }
     .visually-hidden {
       border: 0;
       clip: rect(0, 0, 0, 0);
@@ -426,59 +469,80 @@ DiscounterSummary.styles = css `
       height: 18px;
       width: 18px;
     }
-
+    tbody tr:first-child .name {
+      padding-top: 0px;
+    }
+    .name.loading, .price.loading {
+      padding-top: 8px;
+    }
     .name {
       font-size: 14px;
       font-weight: 400;
       text-align: left;
     }
-
     .name span:nth-child(2) {
       margin-left: 8px;
     }
-
     .price {
       font-size: 14px;
       font-weight: 600;
       text-align: right;
     }
+    .name.loading::after {
+      width: 80px;
+    }
 
+    .price.loading {
+      width: 80px;
+    }
+    .name.loading::after,
+    .price.loading::after {
+      animation: pulse 1s infinite;
+      background-color: var(--discounter-loading-bg, #f0f0fa);
+      border-radius: 3px;
+      content: "";
+      color: transparent;
+      display: list-item;
+    }
     .footer .name {
       font-size: 16px;
       font-weight: 400;
     }
-
     .footer .currency {
       font-size: 12px;
       font-weight: 400;
     }
-
     .footer .emphasis {
       font-size: 24px;
       font-weight: 600;
       letter-spacing: -0.04em;
       line-height: 1em;
     }
-
     .footer .name,
     .footer .price {
       line-height: 1.3em;
       padding-top: 3em;
       white-space: nowrap;
     }
-
     .footer .payment-due {
       position: relative;
     }
-
     .footer .payment-due::after {
       background-color: rgba(162,170,172,0.34);
       content: '';
       position: absolute;
-      top: 1.5em;
+      top: 1.2em;
       left: 0;
       width: 100%;
       height: 1px;
+    }
+    @keyframes pulse {
+      0%, 100% {
+        opacity: 1
+      }
+      50% {
+        opacity: 0;
+      }
     }
   `;
 __decorate([

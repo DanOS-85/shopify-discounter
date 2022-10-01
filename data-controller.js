@@ -142,7 +142,8 @@ export class DataController {
             await this.getTokens();
             const data = await this.queryCheckout();
             if (data.status === 404) {
-                throw Error('CART Empty! 404 status!');
+                this._error = true;
+                return;
             }
             if (!data.ok) {
                 throw Error('Not ok status!');
@@ -158,12 +159,15 @@ export class DataController {
         }
         catch (error) {
             console.log(error);
-            this._error = true;
         }
     }
     async hostConnected() {
         await this.discountQuery();
         this.host.requestUpdate();
+        window.addEventListener('cart-updated', async () => {
+            await this.discountQuery();
+            this.host.requestUpdate();
+        });
     }
 }
 //# sourceMappingURL=data-controller.js.map

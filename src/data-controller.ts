@@ -12,6 +12,7 @@ export interface Discount {
   title: string,
   amount: string,
   application_type: string,
+  value_type: string,
 }
 
 export interface CheckoutData {
@@ -202,7 +203,8 @@ export class DataController implements ReactiveController {
       const data = await this.queryCheckout();
 
       if (data.status === 404) {
-        throw Error('CART Empty! 404 status!');
+        this._error = true;
+        return;
       }
 
       if (!data.ok) {
@@ -221,12 +223,16 @@ export class DataController implements ReactiveController {
       }
     } catch (error) {
       console.log(error);
-      this._error = true;
     }
   }
 
   async hostConnected() {
     await this.discountQuery();
     this.host.requestUpdate();
+
+    window.addEventListener('cart-updated', async () => {
+      await this.discountQuery();
+      this.host.requestUpdate();
+    });
   }
 }

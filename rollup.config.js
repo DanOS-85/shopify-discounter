@@ -22,7 +22,7 @@ export default {
     }
   },
   plugins: [
-    replace({'Reflect.decorate': 'undefined'}),
+    replace({'Reflect.decorate': 'undefined', 'preventAssignment': true}),
     resolve(),
     // Minify HTML template literals
     minifyHTML(),
