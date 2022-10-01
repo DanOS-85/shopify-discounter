@@ -41,6 +41,7 @@ export class DiscounterForm extends LitElement {
       border-radius: 5px;
       background: var(--discounter-button-color, black);
       color: white;
+      cursor: pointer;
       font-weight: 600;
       padding: 13px 24px;
       position: relative;
@@ -271,7 +272,7 @@ export class DiscounterForm extends LitElement {
       return html`<p>Your cart is currently empty.</p>`;
     }
 
-    const classes = this.loading ? 'button loading': 'button';
+    const classes = this.loading ? 'loading': '';
     const errorClass = this.error ? 'error' : '';
 
     return html`
