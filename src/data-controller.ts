@@ -60,7 +60,7 @@ export class DataController implements ReactiveController {
     const data = await fetch('/checkout');
 
     if (data.status === 409) {
-      setTimeout(async () => await this.getTokens());
+      await this.getTokens();
       return;
     }
 
@@ -73,7 +73,36 @@ export class DataController implements ReactiveController {
     div.innerHTML = text;
     const metaSelector = "[name=shopify-checkout-authorization-token]";
     this._authorizationToken = (div.querySelector(metaSelector) as HTMLMetaElement)?.content ?? '';
+    const metaContent = (div.querySelector('meta[http-equi="refresh"]') as HTMLMetaElement)?.content ?? '';
     this._token = data.url.split('/').pop() as string;
+
+    if (!this._authorizationToken) {
+
+      const urlRegex = /(https?:\/\/[^ ]*)/;
+      const matches = metaContent.match(urlRegex);
+
+      if(!matches?.length) return;
+  
+      const url = matches[1];
+      const data = await fetch(url);
+
+      if (data.status === 409) {
+        await this.getTokens();
+        return;
+      }
+  
+      if (!data.ok) {
+        throw Error('Query failed!');
+      }
+
+      const text = await data.text();
+      const div = document.createElement('div');
+      div.innerHTML = text;
+      const metaSelector = "[name=shopify-checkout-authorization-token]";
+      this._authorizationToken = (div.querySelector(metaSelector) as HTMLMetaElement)?.content ?? '';
+      this._token = data.url.split('/').pop() as string;
+
+    }
   }
 
   async queryCheckout(method="GET", body:string|null=null) {
@@ -90,9 +119,7 @@ export class DataController implements ReactiveController {
     });
 
     if (data.status === 409) {
-      setTimeout(async () => {
-        data = await this.queryCheckout(method, body);
-      });
+      data = await this.queryCheckout(method, body);
     }
 
     return data;

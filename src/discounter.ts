@@ -8,6 +8,8 @@ import {LitElement, html, css} from 'lit';
 import {customElement, property, state} from 'lit/decorators.js';
 import { CLOSE_ICON, DISCOUNT_ICON, GIFT_ICON, INFO_ICON, SPINNER_ICON } from './constants';
 import { DataController, GiftCard, CheckoutData, Discount } from './data-controller';
+import {msg, localized, str} from '@lit/localize';
+import { getLocale, setLocaleFromUrl } from './localization';
 
 /**
  * An example element.
@@ -16,6 +18,8 @@ import { DataController, GiftCard, CheckoutData, Discount } from './data-control
  * @slot - This element has a slot
  * @csspart button - The button
  */
+
+@localized()
 @customElement('discounter-form')
 export class DiscounterForm extends LitElement {
   static override styles = css`
@@ -220,7 +224,7 @@ export class DiscounterForm extends LitElement {
               @mouseleave=${this.hideTooltip}
             >
               <div class="tooltip" style="position: absolute; display: none;">
-                Automatic discount can't be removed
+                ${msg("Automatic discount can't be removed")}
               </div>
               ${INFO_ICON}
             </div>
@@ -271,7 +275,7 @@ export class DiscounterForm extends LitElement {
 
   override render() {
     if (this.dataFetcher._error && this.emptyMsg) {
-      return html`<p>Your cart is currently empty.</p>`;
+      return html`<p>${msg("Your cart is currently empty.")}</p>`;
     }
 
     const classes = this.loading ? 'loading': '';
@@ -284,7 +288,7 @@ export class DiscounterForm extends LitElement {
             <input
               type="text"
               class=${errorClass}
-              placeholder="Gift card or discount code"
+              placeholder=${msg('Gift card or discount code')}
               .value=${this.code}
               @input=${this.handleInput}
             >
@@ -294,20 +298,20 @@ export class DiscounterForm extends LitElement {
               ?disabled=${this.dataFetcher._error || !this.code.length}
               @click=${this.applyCode}
             >
-              <span>Apply</span>
+              <span>${msg("Apply")}</span>
               ${SPINNER_ICON}
             </button>
           </div>
 
           ${
             this.dataFetcher._error
-            ? html`<p class="message">Your cart is currently empty.</p>`
+            ? html`<p class="message">${msg("Your cart is currently empty.")}</p>`
             : ''
           }
 
           ${
             this.error
-            ? html`<p class="message error">Invalid discount code or gift card or invalid combination</p>`
+            ? html`<p class="message error">${msg("Invalid discount code or gift card or invalid combination")}</p>`
             : ''
           }
         </div>
@@ -433,12 +437,12 @@ export class DiscounterSummary extends LitElement {
         ${
           this.data.checkout.applied_discounts.map(discount => {
             const price = discount.value_type === "shipping" ?
-              'Free shipping':
+              msg('Free shipping'):
               `- ${this._formatMoney(locale, currency, discount.amount)}`;
 
             return html`<tr class="reduction-code">
             <th class="name" scope="row">
-              <span>Discount</span>
+              <span>${msg("Discount")}</span>
               <span>
                 ${DISCOUNT_ICON}
                 <span class="text">${discount.title.toUpperCase()}</span>
@@ -447,7 +451,7 @@ export class DiscounterSummary extends LitElement {
     
             <td class="price">
               <span class="emphasis" aria-hidden="true">${price}</span>
-              <span class="visually-hidden">${price} of total order price</span>
+              <span class="visually-hidden">${msg(str`${price} of total order price`)}</span>
             </td>
           </tr>`;
           })
@@ -465,13 +469,13 @@ export class DiscounterSummary extends LitElement {
           this.data.checkout.gift_cards.map(giftCard => {
             return html`<tr class="reduction-code">
                 <th class="name" scope="row">
-                  <span>Gift card</span>
+                  <span>${msg("Gift card")}</span>
                   <span>
                     ${GIFT_ICON}
                     <span class="text">
                       <span aria-hidden="true">•••• ${giftCard.last_characters.toUpperCase()}</span>
                       <span class="visually-hidden">
-                        Gift card ending with ${giftCard.last_characters.toUpperCase()}
+                        ${msg(str`Gift card ending with ${giftCard.last_characters.toUpperCase()}`)}
                       </span>
                     </span>
                   </span>
@@ -513,16 +517,16 @@ export class DiscounterSummary extends LitElement {
       return html`
         <div class="discounter-summary">
           <table class="table">
-            <caption class="visually-hidden">Cost summary</caption>
+            <caption class="visually-hidden">${msg("Cost summary")}</caption>
             <thead>
               <tr>
-                <th scope="col"><span class="visually-hidden">Description</span></th>
-                <th scope="col"><span class="visually-hidden">Price</span></th>
+                <th scope="col"><span class="visually-hidden">${msg("Description")}</span></th>
+                <th scope="col"><span class="visually-hidden">${msg("Price")}</span></th>
               </tr>
             </thead>
             <tbody class="tbody">
               <tr class="subtotal">
-                <th class="name" scope="row">Subtotal</th>
+                <th class="name" scope="row">${msg("Subtotal")}</th>
                 <td class="price loading"></td>
               </tr>
 
@@ -533,7 +537,7 @@ export class DiscounterSummary extends LitElement {
             </tbody>
             <tfoot class="footer">
               <tr class="payment-due">
-                <th class="name" scope="row">Total</th>
+                <th class="name" scope="row">${msg("Total")}</th>
                 <td class="price loading"></td>
               </tr>
             </tfoot>
@@ -545,16 +549,16 @@ export class DiscounterSummary extends LitElement {
     return html`
       <div class="discounter-summary">
         <table class="table">
-          <caption class="visually-hidden">Cost summary</caption>
+          <caption class="visually-hidden">${msg("Cost summary")}</caption>
           <thead>
             <tr>
-              <th scope="col"><span class="visually-hidden">Description</span></th>
-              <th scope="col"><span class="visually-hidden">Price</span></th>
+              <th scope="col"><span class="visually-hidden">${msg("Description")}</span></th>
+              <th scope="col"><span class="visually-hidden">${msg("Price")}</span></th>
             </tr>
           </thead>
           <tbody class="tbody">
             <tr class="subtotal">
-              <th class="name" scope="row">Subtotal</th>
+              <th class="name" scope="row">${msg("Subtotal")}</th>
               <td class="price">
                 <span class="emphasis">
                   ${this._formatMoney(
@@ -571,7 +575,7 @@ export class DiscounterSummary extends LitElement {
           </tbody>
           <tfoot class="footer">
             <tr class="payment-due">
-              <th class="name" scope="row">Total</th>
+              <th class="name" scope="row">${msg("Total")}</th>
               <td class="price">
                 <span class="currency">${this.data.checkout.presentment_currency}</span>
                 <span class="emphasis">

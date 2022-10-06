@@ -11,7 +11,7 @@ import minifyHTML from 'rollup-plugin-minify-html-literals';
 import replace from '@rollup/plugin-replace';
 
 export default {
-  input: 'discounter.js',
+  input: 'index.js',
   output: {
     file: 'discounter.bundled.js',
     format: 'esm',

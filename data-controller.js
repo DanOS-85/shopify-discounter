@@ -22,7 +22,7 @@ export class DataController {
         var _a, _b;
         const data = await fetch('/checkout');
         if (data.status === 409) {
-            setTimeout(async () => await this.getTokens());
+            await this.getTokens();
             return;
         }
         if (!data.ok) {
@@ -48,9 +48,7 @@ export class DataController {
             credentials: 'omit'
         });
         if (data.status === 409) {
-            setTimeout(async () => {
-                data = await this.queryCheckout(method, body);
-            });
+            data = await this.queryCheckout(method, body);
         }
         return data;
     }
