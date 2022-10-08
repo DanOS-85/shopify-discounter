@@ -28,11 +28,13 @@ export class DiscounterForm extends LitElement {
     .form {
       display: flex;
       flex-wrap: wrap;
-      gap: 12px;
+      gap: var(--discounter-form-gap, 12px);
     }
     .form input {
-      color: inherit;
-      border-radius: 5px;
+      background: var(--discounter-input-bg-color, initial);
+      border: var(--discounter-input-border, initial);
+      border-radius: var(--discounter-input-border-radius, 5px);
+      color: var(--discounter-input-bg-color, inherit);
       flex: 1 1 0%;
       padding: 13px 11px;
     }
@@ -41,9 +43,9 @@ export class DiscounterForm extends LitElement {
     }
     .form button {
       border: 0;
-      border-radius: 5px;
-      background: var(--discounter-button-color, black);
-      color: white;
+      border-radius: var(--discounter-button-border-radius, 5px);
+      background: var(--discounter-button-bg-color, black);
+      color: var(--discounter-button-color, white);
       cursor: pointer;
       font-weight: 600;
       padding: 13px 24px;
@@ -96,7 +98,7 @@ export class DiscounterForm extends LitElement {
     }
     .code {
       background-color: var(--discounter-code-bg, #e7f3f6);
-      border-radius: 5px;
+      border-radius: var(--discounter-code-border-radius, 5px);
       color: var(--discounter-code-color, black);
       display: inline-flex;
       gap: 8px;
