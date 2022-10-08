@@ -37,7 +37,7 @@ export declare class DiscounterSummary extends LitElement {
     private _formatMoney;
     private dataFetcher;
     private data;
-    render(): import("lit-html").TemplateResult<1> | "";
+    render(): "" | import("lit-html").TemplateResult<1>;
 }
 declare global {
     interface HTMLElementTagNameMap {

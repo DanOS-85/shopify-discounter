@@ -9,7 +9,6 @@ import {customElement, property, state} from 'lit/decorators.js';
 import { CLOSE_ICON, DISCOUNT_ICON, GIFT_ICON, INFO_ICON, SPINNER_ICON } from './constants';
 import { DataController, GiftCard, CheckoutData, Discount } from './data-controller';
 import {msg, localized, str} from '@lit/localize';
-import { getLocale, setLocaleFromUrl } from './localization';
 
 /**
  * An example element.

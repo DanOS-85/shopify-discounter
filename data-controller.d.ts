@@ -32,6 +32,8 @@ export declare class DataController implements ReactiveController {
     _gift_cards: Array<GiftCard>;
     _error: boolean;
     constructor(host: ReactiveControllerHost);
+    private getMetaUrl;
+    private getDataFromMetaURL;
     private getTokens;
     queryCheckout(method?: string, body?: string | null): Promise<Response>;
     clearDiscount(event: Event, code: string): Promise<void>;

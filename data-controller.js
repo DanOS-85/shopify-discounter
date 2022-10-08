@@ -18,8 +18,34 @@ export class DataController {
         this._error = false;
         (this.host = host).addController(this);
     }
-    async getTokens() {
+    getMetaUrl(text) {
         var _a, _b;
+        const div = document.createElement('div');
+        div.innerHTML = text;
+        const urlRegex = /(https?:\/\/[^ ]*)/;
+        const metaContent = (_b = (_a = div.querySelector('meta[http-equiv="refresh"]')) === null || _a === void 0 ? void 0 : _a.content) !== null && _b !== void 0 ? _b : '';
+        const matches = metaContent.match(urlRegex);
+        if (!(matches === null || matches === void 0 ? void 0 : matches.length))
+            return;
+        return matches[1];
+    }
+    async getDataFromMetaURL(text) {
+        const url = this.getMetaUrl(text);
+        if (!url)
+            return;
+        const data = await fetch(url);
+        if (data.status === 409) {
+            await this.getTokens();
+            return;
+        }
+        if (!data.ok) {
+            throw Error('Query failed!');
+        }
+        this._token = data.url.split('/').pop();
+        return await data.text();
+    }
+    async getTokens() {
+        var _a, _b, _c, _d;
         const data = await fetch('/checkout');
         if (data.status === 409) {
             await this.getTokens();
@@ -34,6 +60,17 @@ export class DataController {
         const metaSelector = "[name=shopify-checkout-authorization-token]";
         this._authorizationToken = (_b = (_a = div.querySelector(metaSelector)) === null || _a === void 0 ? void 0 : _a.content) !== null && _b !== void 0 ? _b : '';
         this._token = data.url.split('/').pop();
+        if (!this._authorizationToken) {
+            const text2 = await this.getDataFromMetaURL(text);
+            if (!text2)
+                return;
+            const text3 = await this.getDataFromMetaURL(text2);
+            if (!text3)
+                return;
+            const div2 = document.createElement('div');
+            div2.innerHTML = text3;
+            this._authorizationToken = (_d = (_c = div2.querySelector(metaSelector)) === null || _c === void 0 ? void 0 : _c.content) !== null && _d !== void 0 ? _d : '';
+        }
     }
     async queryCheckout(method = "GET", body = null) {
         let data = await fetch(`/wallets/checkouts/${this._token}`, {
@@ -45,7 +82,7 @@ export class DataController {
             body,
             method,
             mode: 'cors',
-            credentials: 'omit'
+            credentials: 'include'
         });
         if (data.status === 409) {
             data = await this.queryCheckout(method, body);

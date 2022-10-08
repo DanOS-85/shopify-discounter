@@ -56,6 +56,38 @@ export class DataController implements ReactiveController {
     (this.host = host).addController(this);
   }
 
+  private getMetaUrl(text: string) {
+    const div = document.createElement('div');
+    div.innerHTML = text;
+
+    const urlRegex = /(https?:\/\/[^ ]*)/;
+    const metaContent = (div.querySelector('meta[http-equiv="refresh"]') as HTMLMetaElement)?.content ?? '';
+    const matches = metaContent.match(urlRegex);
+
+    if(!matches?.length) return;
+
+    return matches[1];
+  }
+
+  private async getDataFromMetaURL(text: string) {
+    const url = this.getMetaUrl(text);
+    if(!url) return;
+
+    const data = await fetch(url);
+
+    if (data.status === 409) {
+      await this.getTokens();
+      return;
+    }
+
+    if (!data.ok) {
+      throw Error('Query failed!');
+    }
+
+    this._token = data.url.split('/').pop() as string;
+    return await data.text();
+  }
+
   private async getTokens() {
     const data = await fetch('/checkout');
 
@@ -73,35 +105,18 @@ export class DataController implements ReactiveController {
     div.innerHTML = text;
     const metaSelector = "[name=shopify-checkout-authorization-token]";
     this._authorizationToken = (div.querySelector(metaSelector) as HTMLMetaElement)?.content ?? '';
-    const metaContent = (div.querySelector('meta[http-equi="refresh"]') as HTMLMetaElement)?.content ?? '';
     this._token = data.url.split('/').pop() as string;
 
     if (!this._authorizationToken) {
+      const text2 = await this.getDataFromMetaURL(text);
+      if(!text2) return;
 
-      const urlRegex = /(https?:\/\/[^ ]*)/;
-      const matches = metaContent.match(urlRegex);
+      const text3 = await this.getDataFromMetaURL(text2);
+      if(!text3) return;
 
-      if(!matches?.length) return;
-  
-      const url = matches[1];
-      const data = await fetch(url);
-
-      if (data.status === 409) {
-        await this.getTokens();
-        return;
-      }
-  
-      if (!data.ok) {
-        throw Error('Query failed!');
-      }
-
-      const text = await data.text();
-      const div = document.createElement('div');
-      div.innerHTML = text;
-      const metaSelector = "[name=shopify-checkout-authorization-token]";
-      this._authorizationToken = (div.querySelector(metaSelector) as HTMLMetaElement)?.content ?? '';
-      this._token = data.url.split('/').pop() as string;
-
+      const div2 = document.createElement('div');
+      div2.innerHTML = text3;
+      this._authorizationToken = (div2.querySelector(metaSelector) as HTMLMetaElement)?.content ?? '';
     }
   }
 
