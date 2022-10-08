@@ -82,7 +82,7 @@ export class DataController {
             body,
             method,
             mode: 'cors',
-            credentials: 'include'
+            credentials: 'omit'
         });
         if (data.status === 409) {
             data = await this.queryCheckout(method, body);
