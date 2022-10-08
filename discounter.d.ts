@@ -43,5 +43,22 @@ declare global {
     interface HTMLElementTagNameMap {
         'discounter-form': DiscounterForm;
     }
+    interface Window {
+        discounter_i18n: {
+            tooltip: string;
+            empty_msg: string;
+            placeholder: string;
+            apply: string;
+            error_msg: string;
+            free_shipping: string;
+            discount: string;
+            gift_card: string;
+            summary: string;
+            description: string;
+            price: string;
+            subtotal: string;
+            total: string;
+        };
+    }
 }
 //# sourceMappingURL=discounter.d.ts.map

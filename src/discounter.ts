@@ -221,7 +221,7 @@ export class DiscounterForm extends LitElement {
               @mouseleave=${this.hideTooltip}
             >
               <div class="tooltip" style="position: absolute; display: none;">
-                Automatic discount can't be removed
+                ${window.discounter_i18n?.tooltip || "Automatic discount can't be removed"}
               </div>
               ${INFO_ICON}
             </div>
@@ -272,7 +272,7 @@ export class DiscounterForm extends LitElement {
 
   override render() {
     if (this.dataFetcher._error && this.emptyMsg) {
-      return html`<p>Your cart is currently empty.</p>`;
+      return html`<p>${window.discounter_i18n?.empty_msg || "Your cart is currently empty."}</p>`;
     }
 
     const classes = this.loading ? 'loading': '';
@@ -285,7 +285,7 @@ export class DiscounterForm extends LitElement {
             <input
               type="text"
               class=${errorClass}
-              placeholder="Gift card or discount code"
+              placeholder=${window.discounter_i18n?.placeholder || "Gift card or discount code"}
               .value=${this.code}
               @input=${this.handleInput}
             >
@@ -295,20 +295,24 @@ export class DiscounterForm extends LitElement {
               ?disabled=${this.dataFetcher._error || !this.code.length}
               @click=${this.applyCode}
             >
-              <span>${window.discounter_i18n.apply || 'Apply'}</span>
+              <span>${window.discounter_i18n?.apply || 'Apply'}</span>
               ${SPINNER_ICON}
             </button>
           </div>
 
           ${
             this.dataFetcher._error
-            ? html`<p class="message">Your cart is currently empty.</p>`
+            ? html`<p class="message">
+              ${window.discounter_i18n?.empty_msg || "Your cart is currently empty."}
+            </p>`
             : ''
           }
 
           ${
             this.error
-            ? html`<p class="message error">Invalid discount code or gift card or invalid combination</p>`
+            ? html`<p class="message error">
+              ${window.discounter_i18n?.error_msg || "Invalid discount code or gift card or invalid combination"}
+            </p>`
             : ''
           }
         </div>
@@ -434,12 +438,12 @@ export class DiscounterSummary extends LitElement {
         ${
           this.data.checkout.applied_discounts.map(discount => {
             const price = discount.value_type === "shipping" ?
-              'Free shipping':
+              window.discounter_i18n?.free_shipping || 'Free shipping':
               `- ${this._formatMoney(locale, currency, discount.amount)}`;
 
             return html`<tr class="reduction-code">
             <th class="name" scope="row">
-              <span>Discount</span>
+              <span>${window.discounter_i18n?.discount || "Discount"}</span>
               <span>
                 ${DISCOUNT_ICON}
                 <span class="text">${discount.title.toUpperCase()}</span>
@@ -448,7 +452,9 @@ export class DiscounterSummary extends LitElement {
     
             <td class="price">
               <span class="emphasis" aria-hidden="true">${price}</span>
-              <span class="visually-hidden">${price} of total order price</span>
+              <span class="visually-hidden">
+                ${price} of total order price
+              </span>
             </td>
           </tr>`;
           })
@@ -466,7 +472,7 @@ export class DiscounterSummary extends LitElement {
           this.data.checkout.gift_cards.map(giftCard => {
             return html`<tr class="reduction-code">
                 <th class="name" scope="row">
-                  <span>Gift card</span>
+                  <span>${window.discounter_i18n?.gift_card || "Gift card"}</span>
                   <span>
                     ${GIFT_ICON}
                     <span class="text">
@@ -514,16 +520,22 @@ export class DiscounterSummary extends LitElement {
       return html`
         <div class="discounter-summary">
           <table class="table">
-            <caption class="visually-hidden">Cost summary</caption>
+            <caption class="visually-hidden">
+              ${window.discounter_i18n?.summary || "Cost summary"}
+            </caption>
             <thead>
               <tr>
-                <th scope="col"><span class="visually-hidden">Description</span></th>
-                <th scope="col"><span class="visually-hidden">Price</span></th>
+                <th scope="col">
+                  <span class="visually-hidden">${window.discounter_i18n?.description || "Description"}</span>
+                </th>
+                <th scope="col">
+                  <span class="visually-hidden">${window.discounter_i18n?.price || "Price"}</span>
+                </th>
               </tr>
             </thead>
             <tbody class="tbody">
               <tr class="subtotal">
-                <th class="name" scope="row">Subtotal</th>
+                <th class="name" scope="row">${window.discounter_i18n?.subtotal || "Subtotal"}</th>
                 <td class="price loading"></td>
               </tr>
 
@@ -534,7 +546,7 @@ export class DiscounterSummary extends LitElement {
             </tbody>
             <tfoot class="footer">
               <tr class="payment-due">
-                <th class="name" scope="row">Total</th>
+                <th class="name" scope="row">${window.discounter_i18n?.total || "Total"}</th>
                 <td class="price loading"></td>
               </tr>
             </tfoot>
@@ -546,16 +558,22 @@ export class DiscounterSummary extends LitElement {
     return html`
       <div class="discounter-summary">
         <table class="table">
-          <caption class="visually-hidden">Cost summary</caption>
+          <caption class="visually-hidden">
+            ${window.discounter_i18n?.summary || "Cost summary"}
+          </caption>
           <thead>
             <tr>
-              <th scope="col"><span class="visually-hidden">Description</span></th>
-              <th scope="col"><span class="visually-hidden">Price</span></th>
+              <th scope="col">
+                <span class="visually-hidden">${window.discounter_i18n?.description || "Description"}</span>
+              </th>
+              <th scope="col">
+                <span class="visually-hidden">${window.discounter_i18n?.price || "Price"}</span>
+              </th>
             </tr>
           </thead>
           <tbody class="tbody">
             <tr class="subtotal">
-              <th class="name" scope="row">Subtotal</th>
+              <th class="name" scope="row">${window.discounter_i18n?.subtotal || "Subtotal"}</th>
               <td class="price">
                 <span class="emphasis">
                   ${this._formatMoney(
@@ -572,7 +590,7 @@ export class DiscounterSummary extends LitElement {
           </tbody>
           <tfoot class="footer">
             <tr class="payment-due">
-              <th class="name" scope="row">Total</th>
+              <th class="name" scope="row">${window.discounter_i18n?.total || "Total"}</th>
               <td class="price">
                 <span class="currency">${this.data.checkout.presentment_currency}</span>
                 <span class="emphasis">
@@ -597,7 +615,19 @@ declare global {
   }
   interface Window {
     discounter_i18n: {
-      apply: string
+      tooltip: string,
+      empty_msg: string,
+      placeholder: string,
+      apply: string,
+      error_msg: string,
+      free_shipping: string,
+      discount: string,
+      gift_card: string,
+      summary: string,
+      description: string,
+      price: string,
+      subtotal: string,
+      total: string
     }
   }
 }

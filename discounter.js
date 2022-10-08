@@ -78,6 +78,7 @@ let DiscounterForm = class DiscounterForm extends LitElement {
             this.dataFetcher._gift_cards.length) && !this.dataFetcher._error) {
             return html `<div class="codes">
         ${this.dataFetcher._discounts.map((discount) => {
+                var _a;
                 const markup = discount.application_type === "automatic" ?
                     html `<div
               style="position: relative; display: flex;"
@@ -85,7 +86,7 @@ let DiscounterForm = class DiscounterForm extends LitElement {
               @mouseleave=${this.hideTooltip}
             >
               <div class="tooltip" style="position: absolute; display: none;">
-                Automatic discount can't be removed
+                ${((_a = window.discounter_i18n) === null || _a === void 0 ? void 0 : _a.tooltip) || "Automatic discount can't be removed"}
               </div>
               ${INFO_ICON}
             </div>
@@ -131,8 +132,9 @@ let DiscounterForm = class DiscounterForm extends LitElement {
         return '';
     }
     render() {
+        var _a, _b, _c, _d, _e;
         if (this.dataFetcher._error && this.emptyMsg) {
-            return html `<p>Your cart is currently empty.</p>`;
+            return html `<p>${((_a = window.discounter_i18n) === null || _a === void 0 ? void 0 : _a.empty_msg) || "Your cart is currently empty."}</p>`;
         }
         const classes = this.loading ? 'loading' : '';
         const errorClass = this.error ? 'error' : '';
@@ -143,7 +145,7 @@ let DiscounterForm = class DiscounterForm extends LitElement {
             <input
               type="text"
               class=${errorClass}
-              placeholder="Gift card or discount code"
+              placeholder=${((_b = window.discounter_i18n) === null || _b === void 0 ? void 0 : _b.placeholder) || "Gift card or discount code"}
               .value=${this.code}
               @input=${this.handleInput}
             >
@@ -153,17 +155,21 @@ let DiscounterForm = class DiscounterForm extends LitElement {
               ?disabled=${this.dataFetcher._error || !this.code.length}
               @click=${this.applyCode}
             >
-              <span>Apply</span>
+              <span>${((_c = window.discounter_i18n) === null || _c === void 0 ? void 0 : _c.apply) || 'Apply'}</span>
               ${SPINNER_ICON}
             </button>
           </div>
 
           ${this.dataFetcher._error
-            ? html `<p class="message">Your cart is currently empty.</p>`
+            ? html `<p class="message">
+              ${((_d = window.discounter_i18n) === null || _d === void 0 ? void 0 : _d.empty_msg) || "Your cart is currently empty."}
+            </p>`
             : ''}
 
           ${this.error
-            ? html `<p class="message error">Invalid discount code or gift card or invalid combination</p>`
+            ? html `<p class="message error">
+              ${((_e = window.discounter_i18n) === null || _e === void 0 ? void 0 : _e.error_msg) || "Invalid discount code or gift card or invalid combination"}
+            </p>`
             : ''}
         </div>
 
@@ -320,12 +326,13 @@ let DiscounterSummary = class DiscounterSummary extends LitElement {
         if (this.data.checkout.applied_discounts.length) {
             return html `
         ${this.data.checkout.applied_discounts.map(discount => {
+                var _a, _b;
                 const price = discount.value_type === "shipping" ?
-                    'Free shipping' :
+                    ((_a = window.discounter_i18n) === null || _a === void 0 ? void 0 : _a.free_shipping) || 'Free shipping' :
                     `- ${this._formatMoney(locale, currency, discount.amount)}`;
                 return html `<tr class="reduction-code">
             <th class="name" scope="row">
-              <span>Discount</span>
+              <span>${((_b = window.discounter_i18n) === null || _b === void 0 ? void 0 : _b.discount) || "Discount"}</span>
               <span>
                 ${DISCOUNT_ICON}
                 <span class="text">${discount.title.toUpperCase()}</span>
@@ -334,7 +341,9 @@ let DiscounterSummary = class DiscounterSummary extends LitElement {
     
             <td class="price">
               <span class="emphasis" aria-hidden="true">${price}</span>
-              <span class="visually-hidden">${price} of total order price</span>
+              <span class="visually-hidden">
+                ${price} of total order price
+              </span>
             </td>
           </tr>`;
             })}
@@ -346,9 +355,10 @@ let DiscounterSummary = class DiscounterSummary extends LitElement {
         if (this.data.checkout.gift_cards.length) {
             return html `
         ${this.data.checkout.gift_cards.map(giftCard => {
+                var _a;
                 return html `<tr class="reduction-code">
                 <th class="name" scope="row">
-                  <span>Gift card</span>
+                  <span>${((_a = window.discounter_i18n) === null || _a === void 0 ? void 0 : _a.gift_card) || "Gift card"}</span>
                   <span>
                     ${GIFT_ICON}
                     <span class="text">
@@ -375,6 +385,7 @@ let DiscounterSummary = class DiscounterSummary extends LitElement {
         return new Intl.NumberFormat(locale, { style: 'currency', currency }).format(+amount);
     }
     render() {
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
         if (this.dataFetcher._error) {
             return '';
         }
@@ -382,16 +393,22 @@ let DiscounterSummary = class DiscounterSummary extends LitElement {
             return html `
         <div class="discounter-summary">
           <table class="table">
-            <caption class="visually-hidden">Cost summary</caption>
+            <caption class="visually-hidden">
+              ${((_a = window.discounter_i18n) === null || _a === void 0 ? void 0 : _a.summary) || "Cost summary"}
+            </caption>
             <thead>
               <tr>
-                <th scope="col"><span class="visually-hidden">Description</span></th>
-                <th scope="col"><span class="visually-hidden">Price</span></th>
+                <th scope="col">
+                  <span class="visually-hidden">${((_b = window.discounter_i18n) === null || _b === void 0 ? void 0 : _b.description) || "Description"}</span>
+                </th>
+                <th scope="col">
+                  <span class="visually-hidden">${((_c = window.discounter_i18n) === null || _c === void 0 ? void 0 : _c.price) || "Price"}</span>
+                </th>
               </tr>
             </thead>
             <tbody class="tbody">
               <tr class="subtotal">
-                <th class="name" scope="row">Subtotal</th>
+                <th class="name" scope="row">${((_d = window.discounter_i18n) === null || _d === void 0 ? void 0 : _d.subtotal) || "Subtotal"}</th>
                 <td class="price loading"></td>
               </tr>
 
@@ -402,7 +419,7 @@ let DiscounterSummary = class DiscounterSummary extends LitElement {
             </tbody>
             <tfoot class="footer">
               <tr class="payment-due">
-                <th class="name" scope="row">Total</th>
+                <th class="name" scope="row">${((_e = window.discounter_i18n) === null || _e === void 0 ? void 0 : _e.total) || "Total"}</th>
                 <td class="price loading"></td>
               </tr>
             </tfoot>
@@ -413,16 +430,22 @@ let DiscounterSummary = class DiscounterSummary extends LitElement {
         return html `
       <div class="discounter-summary">
         <table class="table">
-          <caption class="visually-hidden">Cost summary</caption>
+          <caption class="visually-hidden">
+            ${((_f = window.discounter_i18n) === null || _f === void 0 ? void 0 : _f.summary) || "Cost summary"}
+          </caption>
           <thead>
             <tr>
-              <th scope="col"><span class="visually-hidden">Description</span></th>
-              <th scope="col"><span class="visually-hidden">Price</span></th>
+              <th scope="col">
+                <span class="visually-hidden">${((_g = window.discounter_i18n) === null || _g === void 0 ? void 0 : _g.description) || "Description"}</span>
+              </th>
+              <th scope="col">
+                <span class="visually-hidden">${((_h = window.discounter_i18n) === null || _h === void 0 ? void 0 : _h.price) || "Price"}</span>
+              </th>
             </tr>
           </thead>
           <tbody class="tbody">
             <tr class="subtotal">
-              <th class="name" scope="row">Subtotal</th>
+              <th class="name" scope="row">${((_j = window.discounter_i18n) === null || _j === void 0 ? void 0 : _j.subtotal) || "Subtotal"}</th>
               <td class="price">
                 <span class="emphasis">
                   ${this._formatMoney(this.data.checkout.customer_locale, this.data.checkout.presentment_currency, this.data.checkout.total_line_items_price)}
@@ -435,7 +458,7 @@ let DiscounterSummary = class DiscounterSummary extends LitElement {
           </tbody>
           <tfoot class="footer">
             <tr class="payment-due">
-              <th class="name" scope="row">Total</th>
+              <th class="name" scope="row">${((_k = window.discounter_i18n) === null || _k === void 0 ? void 0 : _k.total) || "Total"}</th>
               <td class="price">
                 <span class="currency">${this.data.checkout.presentment_currency}</span>
                 <span class="emphasis">
