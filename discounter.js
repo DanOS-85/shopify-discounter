@@ -534,6 +534,8 @@ DiscounterSummary.styles = css `
     .footer .currency {
       font-size: 12px;
       font-weight: 400;
+      vertical-align: 0.2em;
+      margin-right: 0.5em;
     }
     .footer .emphasis {
       font-size: 24px;
