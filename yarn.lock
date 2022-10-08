@@ -1220,6 +1220,11 @@
     estree-walker "^1.0.1"
     picomatch "^2.2.2"
 
+"@shopify/theme-currency@^4.1.1":
+  version "4.1.1"
+  resolved "https://registry.yarnpkg.com/@shopify/theme-currency/-/theme-currency-4.1.1.tgz#26d95500c85f0b7d89647f82d3a439ce4d276dea"
+  integrity sha512-m7eMeI4B7R8e8tMeI1dI0CQP+JkM7fMVN1+qKwkUll+MqbHtF/6iuiyDxTGiOJxvDMOpGtS5vRIoly7fsD4CTQ==
+
 "@sindresorhus/slugify@^1.1.2":
   version "1.1.2"
   resolved "https://registry.npmjs.org/@sindresorhus/slugify/-/slugify-1.1.2.tgz"

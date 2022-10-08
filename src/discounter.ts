@@ -8,6 +8,8 @@ import {LitElement, html, css} from 'lit';
 import {customElement, property, state} from 'lit/decorators.js';
 import { CLOSE_ICON, DISCOUNT_ICON, GIFT_ICON, INFO_ICON, SPINNER_ICON } from './constants';
 import { DataController, GiftCard, CheckoutData, Discount } from './data-controller';
+// @ts-ignore
+import { formatMoney } from '@shopify/theme-currency';
 
 /**
  * An example element.
@@ -388,6 +390,8 @@ export class DiscounterSummary extends LitElement {
     .footer .currency {
       font-size: 12px;
       font-weight: 400;
+      vertical-align: 0.2em;
+      margin-right: 0.5em;
     }
     .footer .emphasis {
       font-size: 24px;
@@ -432,14 +436,14 @@ export class DiscounterSummary extends LitElement {
     }) as EventListener);
   }
 
-  private _getDiscounts(locale: string, currency: string) {
+  private _getDiscounts(moneyFormat: string) {
     if (this.data.checkout.applied_discounts.length) {
       return html`
         ${
           this.data.checkout.applied_discounts.map(discount => {
             const price = discount.value_type === "shipping" ?
               window.discounter_i18n?.free_shipping || 'Free shipping':
-              `- ${this._formatMoney(locale, currency, discount.amount)}`;
+              `- ${formatMoney(+discount.amount * 100, moneyFormat)}`;
 
             return html`<tr class="reduction-code">
             <th class="name" scope="row">
@@ -465,7 +469,7 @@ export class DiscounterSummary extends LitElement {
     return ''
   }
 
-  private _getGiftCards(locale: string, currency: string) {
+  private _getGiftCards(moneyFormat: string) {
     if (this.data.checkout.gift_cards.length) {
       return html`
         ${
@@ -486,11 +490,10 @@ export class DiscounterSummary extends LitElement {
 
                 <td class="price">
                   <span class="emphasis">
-                    - ${this._formatMoney(
-                        locale,
-                        currency,
-                        giftCard.presentment_amount_used)
-                      }
+                    - ${formatMoney(
+                        +giftCard.presentment_amount_used * 100,
+                        moneyFormat
+                      )}
                   </span>
                 </td>
               </tr>`;
@@ -500,10 +503,6 @@ export class DiscounterSummary extends LitElement {
     }
 
     return ''
-  }
-
-  private _formatMoney(locale: string, currency: string, amount: string) {
-    return new Intl.NumberFormat(locale, { style: 'currency', currency }).format(+amount);
   }
 
   private dataFetcher = new DataController(this);
@@ -576,17 +575,16 @@ export class DiscounterSummary extends LitElement {
               <th class="name" scope="row">${window.discounter_i18n?.subtotal || "Subtotal"}</th>
               <td class="price">
                 <span class="emphasis">
-                  ${this._formatMoney(
-                    this.data.checkout.customer_locale,
-                    this.data.checkout.presentment_currency,
-                    this.data.checkout.total_line_items_price
+                  ${formatMoney(
+                    +this.data.checkout.total_line_items_price * 100,
+                    this.data.checkout.currency_format.format
                   )}
                 </span>
               </td>
             </tr>
 
-            ${this._getDiscounts(this.data.checkout.customer_locale, this.data.checkout.presentment_currency)}
-            ${this._getGiftCards(this.data.checkout.customer_locale, this.data.checkout.presentment_currency)}
+            ${this._getDiscounts(this.data.checkout.currency_format.format)}
+            ${this._getGiftCards(this.data.checkout.currency_format.format)}
           </tbody>
           <tfoot class="footer">
             <tr class="payment-due">
@@ -594,10 +592,9 @@ export class DiscounterSummary extends LitElement {
               <td class="price">
                 <span class="currency">${this.data.checkout.presentment_currency}</span>
                 <span class="emphasis">
-                  ${this._formatMoney(
-                    this.data.checkout.customer_locale,
-                    this.data.checkout.presentment_currency,
-                    this.data.checkout.payment_due
+                  ${formatMoney(
+                    +this.data.checkout.payment_due * 100,
+                    this.data.checkout.currency_format.format
                   )}
                 </span>
               </td>

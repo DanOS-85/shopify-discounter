@@ -9,8 +9,10 @@ export class DataController {
                 total_discount_amount: "",
                 total_line_items_price: "",
                 payment_due: "",
-                customer_locale: "",
                 presentment_currency: "",
+                currency_format: {
+                    format: ""
+                }
             }
         };
         this._discounts = [];

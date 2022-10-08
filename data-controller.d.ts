@@ -12,6 +12,9 @@ export interface Discount {
     application_type: string;
     value_type: string;
 }
+export interface Currency {
+    format: string;
+}
 export interface CheckoutData {
     checkout: {
         applied_discounts: Array<Discount>;
@@ -19,8 +22,8 @@ export interface CheckoutData {
         total_discount_amount: string;
         total_line_items_price: string;
         payment_due: string;
-        customer_locale: string;
         presentment_currency: string;
+        currency_format: Currency;
     };
 }
 export declare class DataController implements ReactiveController {

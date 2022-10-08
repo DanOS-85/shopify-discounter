@@ -34,7 +34,6 @@ export declare class DiscounterSummary extends LitElement {
     constructor();
     private _getDiscounts;
     private _getGiftCards;
-    private _formatMoney;
     private dataFetcher;
     private data;
     render(): "" | import("lit-html").TemplateResult<1>;
