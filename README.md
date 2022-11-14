@@ -1,134 +1,107 @@
-# LitElement TypeScript starter
+# Shopify Discounter Web Component
 
-This project includes a sample component using LitElement with TypeScript.
+### Add Shopify discounter web component in any page in your store!!!
 
-This template is generated from the `lit-starter-ts` package in [the main Lit
-repo](https://github.com/lit/lit). Issues and PRs for this template should be
-filed in that repo.
+Shopify discounter web component supports:
+- Discount codes
+- Automatic discounts
+- Gift cards
+- Discount combinations
+- Multi currencies
+- Internalization
+- Style customization using css variables
+- Place it anywhere in your store
+- See Demo bellow in Testing section.
 
-## Setup
+## Getting started
+Download Shopify discounter script [discounter.bundled.js](https://www.meraki-apps.com/js/discounter.bundled.js).
 
-Install dependencies:
+Add the script to you Shopify assets folder, then add either code snippets below where you want the discounter to render in your store.
 
-```bash
-npm i
+### Minimal setup:
+
+```
+<script src="{{ 'discounter.bundled.js' | asset_url }}" type="module"></script>
+<discounter-form empty-msg></discounter-form>
+<discounter-summary></discounter-summary>
 ```
 
-## Build
+### Full setup:
 
-This sample uses the TypeScript compiler to produce JavaScript that runs in modern browsers.
+```
+<script src="{{ 'discounter.bundled.js' | asset_url }}" type="module"></script>
 
-To build the JavaScript version of your component:
 
-```bash
-npm run build
+// Theming customization using css variables
+<style>
+  discounter-form {
+    --discounter-button-bg-color: black;
+    --discounter-button-color: white;
+    --discounter-tooltip-bg: purple;
+    --discounter-tooltip-color: yellow;
+    --discounter-code-bg: #ffc107;
+    --discounter-code-color: navy;
+    --discounter-form-gap: 0;
+    --discounter-input-border-radius: 100px 0 0 100px;
+    --discounter-button-border-radius: 0 100px 100px 0;
+    --discounter-code-border-radius: 100px;
+    --discounter-tooltip-border-radius: 100px;
+  }
+
+  discounter-summary {
+    --discounter-loading-bg: gray;
+  }
+</style>
+
+
+// Internalization: provide you own copy for the component
+<script type="text/javascript">
+  window.discounter_i18n = {};
+  window.discounter_i18n = {
+    tooltip: {{ 'discounter_i18n.tooltip' | t | json }},
+    empty_msg: {{ 'discounter_i18n.empty_msg' | t | json }},
+    placeholder: {{ 'discounter_i18n.placeholder' | t | json }},
+    apply: {{ 'discounter_i18n.apply' | t | json }},
+    error_msg: {{ 'discounter_i18n.error_msg' | t | json }},
+    free_shipping: {{ 'discounter_i18n.free_shipping' | t | json }},
+    discount: {{ 'discounter_i18n.discount' | t | json }},
+    gift_card: {{ 'discounter_i18n.gift_card' | t | json }},
+    summary: {{ 'discounter_i18n.summary' | t | json }},
+    description: {{ 'discounter_i18n.description' | t | json }},
+    price: {{ 'discounter_i18n.price' | t | json }},
+    subtotal: {{ 'discounter_i18n.subtotal' | t | json }},
+    total: {{ 'discounter_i18n.total' | t | json }}
+  }
+</script>
+
+
+<discounter-form empty-msg></discounter-form>
+<discounter-summary></discounter-summary>
 ```
 
-To watch files and rebuild when the files are modified, run the following command in a separate shell:
+### Component attributes:
+discounter-form component supports just one attribute (now), it is a boolean attribute empty-msg, when your cart is empty it either shows a cart empty message if attribute is there, if not it renders a disabled form.
 
-```bash
-npm run build:watch
+### Component Events:
+Most stores update their cart dynamically without page reload. In this case you can dispatch 'cart-updated' event so discounter component knows that it needs to update its state too.
+
+```
+// Dispatch 'cart-updated' event after cart updated successfully.
+<script>
+  // Cart updated successfully
+  // ...
+  const event = new CustomEvent('cart-updated');
+  dispatchEvent(event);
+</script>
 ```
 
-Both the TypeScript compiler and lit-analyzer are configured to be very strict. You may want to change `tsconfig.json` to make them less strict.
+### Testing:
+Add this [product](https://meraki-sh0p.myshopify.com/products/2018-new-women-long-dress) to cart, you'll be redirected to cart page.
 
-## Testing
+In cart page there is a list of discount codes / gift cards to test with ;)
 
-This sample uses modern-web.dev's
-[@web/test-runner](https://www.npmjs.com/package/@web/test-runner) for testing. See the
-[modern-web.dev testing documentation](https://modern-web.dev/docs/test-runner/overview) for
-more information.
+To test automatic discount, make your cart total over 1500$ and a discount will apply automatically, if there is no discounts already applied.
 
-Tests can be run with the `test` script, which will run your tests against Lit's development mode (with more verbose errors) as well as against Lit's production mode:
+Hey, here is [another tool](https://www.meraki-apps.com/) that you might like.
 
-```bash
-npm test
-```
-
-For local testing during development, the `test:dev:watch` command will run your tests in Lit's development mode (with verbose errors) on every change to your source files:
-
-```bash
-npm test:watch
-```
-
-Alternatively the `test:prod` and `test:prod:watch` commands will run your tests in Lit's production mode.
-
-## Dev Server
-
-This sample uses modern-web.dev's [@web/dev-server](https://www.npmjs.com/package/@web/dev-server) for previewing the project without additional build steps. Web Dev Server handles resolving Node-style "bare" import specifiers, which aren't supported in browsers. It also automatically transpiles JavaScript and adds polyfills to support older browsers. See [modern-web.dev's Web Dev Server documentation](https://modern-web.dev/docs/dev-server/overview/) for more information.
-
-To run the dev server and open the project in a new browser tab:
-
-```bash
-npm run serve
-```
-
-There is a development HTML file located at `/dev/index.html` that you can view at http://localhost:8000/dev/index.html. Note that this command will serve your code using Lit's development mode (with more verbose errors). To serve your code against Lit's production mode, use `npm run serve:prod`.
-
-## Editing
-
-If you use VS Code, we highly recommend the [lit-plugin extension](https://marketplace.visualstudio.com/items?itemName=runem.lit-plugin), which enables some extremely useful features for lit-html templates:
-
-- Syntax highlighting
-- Type-checking
-- Code completion
-- Hover-over docs
-- Jump to definition
-- Linting
-- Quick Fixes
-
-The project is setup to recommend lit-plugin to VS Code users if they don't already have it installed.
-
-## Linting
-
-Linting of TypeScript files is provided by [ESLint](eslint.org) and [TypeScript ESLint](https://github.com/typescript-eslint/typescript-eslint). In addition, [lit-analyzer](https://www.npmjs.com/package/lit-analyzer) is used to type-check and lint lit-html templates with the same engine and rules as lit-plugin.
-
-The rules are mostly the recommended rules from each project, but some have been turned off to make LitElement usage easier. The recommended rules are pretty strict, so you may want to relax them by editing `.eslintrc.json` and `tsconfig.json`.
-
-To lint the project run:
-
-```bash
-npm run lint
-```
-
-## Formatting
-
-[Prettier](https://prettier.io/) is used for code formatting. It has been pre-configured according to the Lit's style. You can change this in `.prettierrc.json`.
-
-Prettier has not been configured to run when committing files, but this can be added with Husky and and `pretty-quick`. See the [prettier.io](https://prettier.io/) site for instructions.
-
-## Static Site
-
-This project includes a simple website generated with the [eleventy](11ty.dev) static site generator and the templates and pages in `/docs-src`. The site is generated to `/docs` and intended to be checked in so that GitHub pages can serve the site [from `/docs` on the master branch](https://help.github.com/en/github/working-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site).
-
-To enable the site go to the GitHub settings and change the GitHub Pages &quot;Source&quot; setting to &quot;master branch /docs folder&quot;.</p>
-
-To build the site, run:
-
-```bash
-npm run docs
-```
-
-To serve the site locally, run:
-
-```bash
-npm run docs:serve
-```
-
-To watch the site files, and re-build automatically, run:
-
-```bash
-npm run docs:watch
-```
-
-The site will usually be served at http://localhost:8000.
-
-## Bundling and minification
-
-This starter project doesn't include any build-time optimizations like bundling or minification. We recommend publishing components as unoptimized JavaScript modules, and performing build-time optimizations at the application level. This gives build tools the best chance to deduplicate code, remove dead code, and so on.
-
-For information on building application projects that include LitElement components, see [Build for production](https://lit.dev/docs/tools/production/) on the Lit site.
-
-## More information
-
-See [Get started](https://lit.dev/docs/getting-started/) on the Lit site for more information.
+Made with ♥ by [Youssef](https://twitter.com/usef_bh)
