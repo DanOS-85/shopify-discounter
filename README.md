@@ -1,5 +1,7 @@
 # Shopify Discounter Web Component
 
+
+This is making use of [Lit LitElement TypeScript starter](https://github.com/lit/lit-element-starter-ts) :tada: :fire: :heart:
 ### Add Shopify discounter web component in any page in your store!!!
 
 Shopify discounter web component supports:
@@ -104,4 +106,4 @@ To test automatic discount, make your cart total over 1500$ and a discount will 
 
 Hey, here is [another tool](https://www.meraki-apps.com/) that you might like.
 
-Made with ♥ by [Youssef](https://twitter.com/usef_bh)
+Made with :heart: by [Youssef](https://twitter.com/usef_bh)
